@@ -5,7 +5,30 @@ module.exports = {
     "./src/"
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        brand: {
+          turqoise: {
+            400: "#0A6F66",
+            300: "#0C9488",
+            200: "#15B9A8",
+            100: "#CCFCF0",
+          },
+          indigo: {
+            400: "#1E293A",
+            300: "#27354A",
+            200: "#4B5461",
+            100: "#F1F5F9",
+          },
+          green: "#F1F5F9",
+          red: "#EF405F",
+          yellow: "#E8A211"
+        }
+      },
+      fontFamily: {
+        outfit: ["Outfit", "sans-serif"],
+      },
+    },
   },
   plugins: [],
 }
