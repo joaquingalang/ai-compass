@@ -7,7 +7,7 @@ import Waves from "../components/Waves";
 
 function HomePage() {
   return (
-    <div>
+    <>
       <NavBar />
 
       {/* Hero Section */}
@@ -153,7 +153,7 @@ function HomePage() {
         </div>
       </section>
 
-    </div>
+    </>
   );
 }
 
