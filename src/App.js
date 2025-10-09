@@ -1,8 +1,9 @@
+import AnalysisPage from "./pages/AnalysisPage";
 import HomePage from "./pages/HomePage";
 
 function App() {
   return (
-    <HomePage></HomePage>
+    <AnalysisPage></AnalysisPage>
   );
 }
 
