@@ -1,9 +1,18 @@
 import AIDetectorResult from "../components/AiDetectorResult";
 import AnalysisModeSwitch from "../components/AnalysisModeSwitch";
+import TextAnalysisInterface from "../components/TextAnalsyisInterface";
+import FileAnalysisInterface from "../components/FileAnalysisInterface";
 import NavBar from "../components/NavBar";
 import Waves from "../components/Waves";
+import { useState } from "react";
 
 function AnalysisPage() {
+    const [mode, setMode] = useState("text");
+
+    const handleModeSwitch = (newMode) => {
+        setMode(newMode);
+    }
+
     return (
         <div className="bg-brand-white">
 
@@ -24,15 +33,11 @@ function AnalysisPage() {
 
                                     <p className="text-brand-indigo-400 font-outfit text-[42px] font-medium mb-2">Analyze Text</p>
 
-                                    <AnalysisModeSwitch></AnalysisModeSwitch>
+                                    <AnalysisModeSwitch onSwitch={handleModeSwitch}/>
 
-                                    <textarea className="w-full h-[45vh] bg-brand-white rounded-lg mt-8 p-5 font-outfit text-brand-indigo-300 text-lg outline-none resize-none mb-5" placeholder="Insert text to be analyzed here..."></textarea>
+                                    { (mode === "text") && <TextAnalysisInterface/>}
 
-                                    <div className="w-full flex justify-end">
-                                        
-                                        <input type="submit" value="Analyze" className="bg-brand-indigo-300 rounded-xl px-6 py-2 font-outfit text-white text-[22px] font-semibold cursor-pointer"/>
-
-                                    </div>
+                                    { (mode === "file") && <FileAnalysisInterface/>}
                                 
                                 </div>    
 
