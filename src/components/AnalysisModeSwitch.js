@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function AnalysisModeSwitch() {
+function AnalysisModeSwitch({onSwitch}) {
 
     const [selected, setSelected] = useState("text");
 
@@ -12,8 +12,10 @@ function AnalysisModeSwitch() {
     function onTileClick(tile) {
         if (tile === "text") {
             setSelected("text");
+            onSwitch("text");
         } else {
             setSelected("file");
+            onSwitch("file");
         }
     }
 
