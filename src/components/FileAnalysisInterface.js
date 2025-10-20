@@ -1,10 +1,15 @@
 import { useState } from "react";
 import FileIcon from "../assets/file_icon.svg";
 import CloseIcon from "../assets/rounded_close_icon.svg";
+import { extractTextFromFile } from "../utils/extractTextFromFile";
+import { analyzeContent } from "../api/gemini";
+import { useEffect } from "react";
 
-function FileAnalysisInterface() {
+function FileAnalysisInterface({ onAnalyze, setIsLoading }) {
   const [files, setFiles] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
+  const [isLocalLoading, setLocalLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleDrop = (event) => {
     event.preventDefault();
@@ -46,6 +51,11 @@ function FileAnalysisInterface() {
   const handleRemoveFile = (index) => {
     setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
   }
+
+  // Optional: clear error when files change
+  useEffect(() => {
+    setError(null);
+  }, [files]);
 
   const formatFileName = (fileName) => {
     if (fileName.length > 16) {
@@ -143,19 +153,49 @@ function FileAnalysisInterface() {
         )}
         
 
-        {/* Submit Button */}
-        <div className="w-full flex justify-end">
-            <input
-            type="submit"
-            value="Analyze"
-            disabled={files.length === 0}
-            className={`rounded-xl px-6 py-2 font-outfit text-[22px] font-semibold cursor-pointer transition ${
-                files.length > 0
-                ? "bg-brand-indigo-300 text-white hover:bg-brand-indigo-400"
-                : "bg-gray-300 text-gray-500 cursor-not-allowed"
-            }`}
-            />
-        </div>
+    {/* Submit Button */}
+    <div className="w-full flex justify-end items-center gap-4">
+      {error && <p className="text-sm text-red-500">{error}</p>}
+      <input
+        type="button"
+        value={isLocalLoading ? "Analyzing..." : "Analyze"}
+        disabled={files.length === 0 || isLocalLoading}
+        onClick={async () => {
+          setLocalLoading(true);
+          if (setIsLoading) setIsLoading(true);
+          setError(null);
+          try {
+            const texts = [];
+            for (const file of files) {
+              const txt = await extractTextFromFile(file);
+              if (txt && txt.trim().length > 0) texts.push(txt.trim());
+            }
+
+            if (texts.length === 0) {
+              setError("No extractable text found in the selected files.");
+              setLocalLoading(false);
+              if (setIsLoading) setIsLoading(false);
+              return;
+            }
+
+            const combined = texts.join('\n\n');
+            const result = await analyzeContent(combined);
+            if (onAnalyze) onAnalyze(result);
+          } catch (err) {
+            console.error(err);
+            setError(err.message || "Failed to analyze files.");
+          } finally {
+            setLocalLoading(false);
+            if (setIsLoading) setIsLoading(false);
+          }
+        }}
+        className={`rounded-xl px-6 py-2 font-outfit text-[22px] font-semibold cursor-pointer transition ${
+          files.length > 0 && !isLocalLoading
+            ? "bg-brand-indigo-300 text-white hover:bg-brand-indigo-400"
+            : "bg-gray-300 text-gray-500 cursor-not-allowed"
+        }`}
+      />
+    </div>
     </div>
   );
 }
